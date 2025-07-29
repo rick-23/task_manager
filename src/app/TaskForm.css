@@ -1,0 +1,63 @@
+.task-form-container {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem 2.5rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+}
+
+.task-form-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.task-form-container label {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.task-form-container input[type="text"],
+.task-form-container input[type="date"],
+.task-form-container textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-top: 0.25rem;
+  background: #f9f9f9;
+  transition: border 0.2s;
+}
+
+.task-form-container input:focus,
+.task-form-container textarea:focus {
+  border-color: #4f8cff;
+  outline: none;
+}
+
+.task-form-container .error {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+  display: block;
+}
+
+.task-form-container button[type="submit"] {
+  background: #4f8cff;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.task-form-container button[type="submit"]:disabled {
+  background: #b3cfff;
+  cursor: not-allowed;
+}
