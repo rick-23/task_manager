@@ -1,14 +1,12 @@
 'use client'
 import React, { useMemo } from "react";
-import { useSelector } from "react-redux";
 import { handleDragStart } from '../utils/dndUtils';
+import { useSelector } from "react-redux";
+import LoadingSpinner from "./Loading";
 
 function UnassignedTasks({ search }) {
-    const allTasks = useSelector((state) => state.tasks.tasks);
-    const unTasks = useMemo(
-        () => allTasks.filter(t => t.date === null),
-        [allTasks]
-    );
+    const { tasks, loading } = useSelector(state => state.tasks);
+    const unTasks = useMemo(() => tasks.filter(t => t.date === null), [tasks]);
     const filteredTasks = useMemo(() => {
         if (!search) return unTasks;
         return unTasks.filter(task =>
@@ -16,6 +14,7 @@ function UnassignedTasks({ search }) {
         );
     }, [unTasks, search]);
 
+    if (loading) return <LoadingSpinner />;
     return <div className="unassigned-panel">
         <h3>UnassignedTasks</h3>
         {

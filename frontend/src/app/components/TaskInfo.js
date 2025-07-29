@@ -1,17 +1,26 @@
 'use client';
 
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { shallowEqual, useSelector } from "react-redux";
 import '../TaskForm.css';
 
+import LoadingSpinner from "./Loading";
+
+
 export default function TaskInfo() {
-    let params = useParams();
-    console.log(params);
-    const selectedTask = useSelector(({ tasks }) => tasks.tasks.find(task => task.id === parseInt(params.id)), shallowEqual);
-    console.log(selectedTask);
+    const params = useParams();
+    const { loading } = useSelector(state => state.tasks);
+    const selectedTask = useSelector(
+        ({ tasks }) => tasks.tasks.find(task => task.id === params.id),
+        shallowEqual
+    );
 
     if (!selectedTask) {
         return <div>Task not found</div>;
+    }
+    if (loading) {
+        return <LoadingSpinner />;
     }
 
     return (

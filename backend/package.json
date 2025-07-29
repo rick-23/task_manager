@@ -1,0 +1,21 @@
+{
+  "name": "task-manager-backend",
+  "version": "0.1.0",
+  "description": "Backend layer of the Task Manager app",
+  "license": "ISC",
+  "author": "rick-23",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "npm run test"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10",
+    "path": "^0.12.7",
+    "uuid": "^11.1.0"
+  }
+}

@@ -6,15 +6,19 @@ import { useRouter } from "next/navigation";
 import { createTask } from "../store/slicer";
 import { validate } from "../utils/validationUtils";
 import '../TaskForm.css';
+import { useTasks } from "../hooks/useTasks";
+import LoadingSpinner from "./Loading";
 
 export default function CreateTask() {
-    const dispatch = useDispatch();
-    const tasks = useSelector(({ tasks }) => tasks.tasks);
-    const lastIdIndex = tasks[tasks.length - 1]?.id || 0;
+    const { addTask, isLoading } = useTasks();
     const router = useRouter();
+
+    // const dispatch = useDispatch();
+    // const tasks = useSelector(({ tasks }) => tasks.tasks);
+    // const lastIdIndex = tasks[tasks.length - 1]?.id || 0;
+
     const [errors, setErrors] = useState({ title: '', description: '' });
     const [task, setTask] = useState({
-        id: lastIdIndex + 1,
         title: '',
         description: '',
         date: null
@@ -35,11 +39,15 @@ export default function CreateTask() {
         setTask({ ...task, [name]: value });
         setErrors({ ...errors, ...newErrors });
     }
+
+    if (isLoading) return <LoadingSpinner />;
+
     return (
         <div className="task-form-container">
             <form onSubmit={(e) => {
                 e.preventDefault();
-                dispatch(createTask(task));
+                // dispatch(createTask(task));
+                addTask.mutate(task);
                 router.push('/');
             }}>
                 <div>

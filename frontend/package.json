@@ -1,6 +1,7 @@
 {
-  "name": "drag_drop_tasks",
+  "name": "task-manager-frontend",
   "version": "0.1.0",
+  "description": "Frontend layer of the Task Manager app with Drag and Drop functionality",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,6 +11,8 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
+    "@tanstack/react-query": "^5.83.0",
+    "axios": "^1.11.0",
     "next": "15.3.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

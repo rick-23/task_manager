@@ -1,5 +1,7 @@
 
+import { Provider } from "react-redux";
 import "./globals.css";
+import QueryProvider from "./QueryProvider";
 import ReduxProvider from "./store/ReduxProvider";
 
 
@@ -13,9 +15,11 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <ReduxProvider>
-          <main>
-            {children}
-          </main>
+          <QueryProvider>
+            <main>
+              {children}
+            </main>
+          </QueryProvider>
         </ReduxProvider>
       </body>
     </html>

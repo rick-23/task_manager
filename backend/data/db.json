@@ -1,0 +1,20 @@
+[
+  {
+    "id": "b33dc795-1dd8-46eb-9a22-020a52d06ce4",
+    "title": "Test-task1",
+    "description": "Testing the task creation API",
+    "date": "2025-07-29"
+  },
+  {
+    "id": "fccafc1f-f4af-4d0d-a942-4faaf49edf7d",
+    "title": "test task 2",
+    "description": "testing the task creation api - 2",
+    "date": "2025-07-30"
+  },
+  {
+    "id": "4b3281ef-ee5c-4d6d-acd3-3b2e221fe272",
+    "title": "test task 3",
+    "description": "Testing the task without the date set",
+    "date": "2025-07-31"
+  }
+]
