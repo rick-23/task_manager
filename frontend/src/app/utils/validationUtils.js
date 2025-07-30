@@ -16,6 +16,10 @@ export const validate = (name, value) => {
         } else {
             newErrors.description = '';
         }
+    } else if (name === 'date') {
+        if (!isNaN(new Date(value))) {
+            newErrors.description = 'Date is invalid';
+        }
     }
     return newErrors;
 }

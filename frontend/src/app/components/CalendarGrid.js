@@ -8,9 +8,12 @@ import LoadingSpinner from './Loading';
 
 const CalendarGrid = ({ search }) => {
   const today = new Date();
+
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth()); // July (0-indexed)
+
   const days = generateMonthGrid(year, month);
+
   const { tasks, loading } = useSelector(state => state.tasks);
 
   const goToPrev = () => {

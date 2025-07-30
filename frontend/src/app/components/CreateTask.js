@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { createTask } from "../store/slicer";
@@ -9,13 +9,9 @@ import '../TaskForm.css';
 import { useTasks } from "../hooks/useTasks";
 import LoadingSpinner from "./Loading";
 
-export default function CreateTask() {
-    const { addTask, isLoading } = useTasks();
+export default function CreateTask({ taskToEdit, onCancelEdit }) {
+    const { addTask, editTask, isLoading } = useTasks();
     const router = useRouter();
-
-    // const dispatch = useDispatch();
-    // const tasks = useSelector(({ tasks }) => tasks.tasks);
-    // const lastIdIndex = tasks[tasks.length - 1]?.id || 0;
 
     const [errors, setErrors] = useState({ title: '', description: '' });
     const [task, setTask] = useState({
@@ -24,13 +20,46 @@ export default function CreateTask() {
         date: null
     });
 
+    useEffect(() => {
+        if (taskToEdit != null) {
+            setTask({
+                title: taskToEdit.title || "",
+                description: taskToEdit.description || "",
+                date: taskToEdit.date || ""
+            });
+            setErrors({
+                title: '',
+                description: ''
+            });
+        } else {
+            setTask({
+                title: '',
+                description: '',
+                date: null
+            });
+            setErrors({
+                title: '',
+                description: ''
+            });
+        }
+    }, [taskToEdit]);
+
     const isFormValid = useMemo(() => {
-        return (
+        const fieldsValid =
             task.title.trim() !== '' &&
             task.description.trim() !== '' &&
             !errors.title &&
-            !errors.description
-        );
+            !errors.description;
+
+        // If editing, require at least one field to be changed
+        if (taskToEdit) {
+            const changed =
+                task.title.trim() !== (taskToEdit.title || '').trim() ||
+                task.description.trim() !== (taskToEdit.description || '').trim() ||
+                (task.date || '') !== (taskToEdit.date || '');
+            return fieldsValid && changed;
+        }
+        return fieldsValid;
     }, [task, errors]);
 
     const inputChange = (e) => {
@@ -40,16 +69,35 @@ export default function CreateTask() {
         setErrors({ ...errors, ...newErrors });
     }
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const normalizedTask = {
+            ...task,
+            date: task.date === "" ? null : task.date
+        };
+        if (taskToEdit != null) {
+            editTask.mutate({ ...normalizedTask, id: taskToEdit.id });
+            router.push('/');
+        } else {
+            addTask.mutate(task);
+            router.push('/');
+        }
+        setTask({
+            title: '',
+            description: '',
+            date: null
+        });
+        setErrors({
+            title: '',
+            description: ''
+        });
+    }
+
     if (isLoading) return <LoadingSpinner />;
 
     return (
         <div className="task-form-container">
-            <form onSubmit={(e) => {
-                e.preventDefault();
-                // dispatch(createTask(task));
-                addTask.mutate(task);
-                router.push('/');
-            }}>
+            <form onSubmit={handleSubmit}>
                 <div>
                     <label>
                         Task title:
@@ -71,7 +119,15 @@ export default function CreateTask() {
                     <input name="date" type="date" value={task.date || ''} onChange={inputChange} />
                 </div>
 
-                <button type="submit" disabled={!isFormValid}>Create Task</button>
+                <button type="submit" disabled={!isFormValid}>
+                    {taskToEdit != null ? "Update Task" : "Create Task"}
+                </button>
+
+                {taskToEdit != null && (
+                    <button type="button" onClick={onCancelEdit} style={{ marginLeft: "1rem" }}>
+                        Cancel Edit
+                    </button>
+                )}
             </form>
         </div>
     );
