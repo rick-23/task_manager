@@ -1,9 +1,9 @@
 
 import { Provider } from "react-redux";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import QueryProvider from "./QueryProvider";
 import ReduxProvider from "./store/ReduxProvider";
-
 
 export const metadata = {
   title: "Create Next App",
@@ -17,6 +17,7 @@ export default function RootLayout({ children }) {
         <ReduxProvider>
           <QueryProvider>
             <main>
+              <Toaster />
               {children}
             </main>
           </QueryProvider>

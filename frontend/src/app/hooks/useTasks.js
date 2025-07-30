@@ -3,29 +3,59 @@ import { setTasks, setLoading, setError } from "../store/slicer";
 import { useDispatch } from "react-redux";
 import API from "../utils/apiUtils";
 
-export const useTasks = () => {
+export const useTasks = (taskId = null) => {
     const queryClient = useQueryClient();
     const dispatch = useDispatch();
 
-    const { data, isLoading } = useQuery({
-        queryKey: ["tasks"],
+    const {
+        data,
+        isLoading,
+        isError,
+        error
+    }
+        = useQuery({
+            queryKey: ["tasks"],
+            queryFn: async () => {
+                const { data } = await API.get("/api/tasks");
+                dispatch(setTasks(data));
+                return data;
+            },
+            onError: (error) => {
+                console.error("Error fetching tasks:", error);
+                dispatch(setError(error.message));
+            }
+        });
+
+    const {
+        data: selectedTask,
+        isLoading: isLoadingTask
+    } = useQuery({
+        queryKey: ['task', taskId],
         queryFn: async () => {
-            const { data } = await API.get("/api/tasks");
-            dispatch(setTasks(data));
+            const { data } = await API.get(`/api/tasks/${taskId}`);
             return data;
-        }
+        },
+        onError: (error) => {
+            console.error("Error fetching task:", error);
+            dispatch(setError(error.message));
+        },
+        enabled: !!taskId
     });
 
-    const selectedTask = async (id) => {
-        const { data } = await API.get(`/api/tasks/${id}`);
-        return data;
-    }
 
     const addTask = useMutation({
         mutationFn: async (task) => {
             const { data } = await API.post("/api/tasks", task);
             return data;
-        }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["tasks"] });
+        },
+        onError: (error) => {
+            console.error("Error adding task:", error);
+            dispatch(setError(error.message));
+        },
+        enabled: !!taskId
     });
 
     const editTask = useMutation({
@@ -35,7 +65,11 @@ export const useTasks = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["tasks"] });
-        }
+        },
+        onError: (error) => {
+            console.error("Error editing task:", error);
+            dispatch(setError(error.message));
+        },
     });
 
     const deleteTask = useMutation({
@@ -45,6 +79,10 @@ export const useTasks = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["tasks"] });
+        },
+        onError: (error) => {
+            console.error("Error deleting task:", error);
+            dispatch(setError(error.message));
         }
     });
 
@@ -54,6 +92,8 @@ export const useTasks = () => {
         selectedTask,
         addTask,
         editTask,
-        deleteTask
+        deleteTask,
+        isError,
+        tasksError: error
     };
 }

@@ -3,6 +3,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import { createTask } from "../store/slicer";
 import { validate } from "../utils/validationUtils";
 import '../TaskForm.css';
@@ -76,10 +77,24 @@ export default function CreateTask({ taskToEdit, onCancelEdit }) {
             date: task.date === "" ? null : task.date
         };
         if (taskToEdit != null) {
-            editTask.mutate({ ...normalizedTask, id: taskToEdit.id });
+            editTask.mutate({ ...normalizedTask, id: taskToEdit.id }, {
+                onSuccess: () => {
+                    toast.success("Task updated successfully!");
+                },
+                onError: (error) => {
+                    toast.error(`Error updating task: ${error.message}`);
+                }
+            });
             router.push('/');
         } else {
-            addTask.mutate(task);
+            addTask.mutate(task, {
+                onSuccess: () => {
+                    toast.success("Task created successfully!");
+                },
+                onError: (error) => {
+                    toast.error(`Error creating task: ${error.message}`);
+                }
+            });
             router.push('/');
         }
         setTask({
@@ -99,24 +114,24 @@ export default function CreateTask({ taskToEdit, onCancelEdit }) {
         <div className="task-form-container">
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label>
+                    <label htmlFor="task-title">
                         Task title:
                     </label>
-                    <input name="title" type="text" value={task.title} onChange={inputChange} />
+                    <input name="title" id="task-title" type="text" value={task.title} onChange={inputChange} />
                     {errors.title && <span className="error">{errors.title}</span>}
                 </div>
                 <div>
-                    <label>
+                    <label htmlFor="task-description">
                         Task description:
                     </label>
-                    <textarea name="description" value={task.description} onChange={inputChange} />
+                    <textarea name="description" id="task-description" value={task.description} onChange={inputChange} />
                     {errors.description && <span className="error">{errors.description}</span>}
                 </div>
                 <div>
-                    <label>
+                    <label htmlFor="task-date">
                         Task date:
                     </label>
-                    <input name="date" type="date" value={task.date || ''} onChange={inputChange} />
+                    <input name="date" id="task-date" type="date" value={task.date || ''} onChange={inputChange} />
                 </div>
 
                 <button type="submit" disabled={!isFormValid}>
