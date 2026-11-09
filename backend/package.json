@@ -9,17 +9,24 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "jest"
+    "test": "jest",
+    "vapid-keys": "web-push generate-vapid-keys"
   },
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
     "express": "^5.1.0",
+    "nodemailer": "^7.0.13",
     "nodemon": "^3.1.10",
     "path": "^0.12.7",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "jest": "^30.0.5",
     "supertest": "^7.1.4"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }

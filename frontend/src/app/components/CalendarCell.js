@@ -16,7 +16,9 @@ const CalendarCell = ({ day, search }) => {
 
   // Memoize tasks for this day
   const dayTasks = useMemo(
-    () => allTasks.filter(task => task.date === day.date),
+    () => allTasks
+      .filter(task => task.date === day.date)
+      .sort((a, b) => (a.time || '').localeCompare(b.time || '')),
     [allTasks, day.date]
   );
 
@@ -35,7 +37,7 @@ const CalendarCell = ({ day, search }) => {
       const task = allTasks.find(t => t.id === taskId);
       if (task) {
         dispatch(moveTask({ id: taskId, date: day.date }));
-        editTask.mutate({ ...task, date: day.date });
+        editTask.mutate({ id: task.id, date: day.date });
       }
       // If using an async thunk or mutation, await or handle promise
     }

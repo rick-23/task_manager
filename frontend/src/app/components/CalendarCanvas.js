@@ -17,6 +17,7 @@ const CalendarCanvas = () => {
         <div className="calendar-canvas">
             <div className='calendar-sidebar'>
                 <Link href="/tasks/createTask" className="create-task-btn">+ Create Task</Link>
+                <Link href="/settings" className="settings-link">🔔 Reminders</Link>
                 <UnassignedTasks search={search} />
             </div>
 

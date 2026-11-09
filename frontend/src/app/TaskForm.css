@@ -73,3 +73,97 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+
+.task-form-container input[type="time"],
+.task-form-container select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-top: 0.25rem;
+  background: #f9f9f9;
+}
+
+.task-form-container .field-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.task-form-container .field-row > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-form-container input,
+.task-form-container select,
+.task-form-container textarea {
+  box-sizing: border-box;
+}
+
+.task-form-container .hint {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.task-form-container label.inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 400;
+}
+
+.task-form-container.settings section {
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.task-form-container.settings h3 {
+  margin: 0;
+}
+
+.task-form-container button.primary,
+.task-form-container button.secondary {
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #4f8cff;
+}
+
+.task-form-container button.primary {
+  background: #4f8cff;
+  color: #fff;
+}
+
+.task-form-container button.secondary {
+  background: #fff;
+  color: #4f8cff;
+}
+
+.channel-status.on {
+  color: #1e8e3e;
+}
+
+.channel-status.off {
+  color: #888;
+}
+
+.task-meta {
+  color: #555;
+  margin: 0.25rem 0;
+}
+
+.done-badge {
+  display: inline-block;
+  background: #e6f4ea;
+  color: #1e8e3e;
+  border-radius: 999px;
+  padding: 0.1rem 0.6rem;
+  font-size: 0.85rem;
+  margin-left: 0.5rem;
+}

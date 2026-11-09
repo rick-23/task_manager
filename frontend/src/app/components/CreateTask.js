@@ -4,40 +4,46 @@ import { useMemo, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { createTask } from "../store/slicer";
 import { validate } from "../utils/validationUtils";
+import { REMINDER_OPTIONS } from "../utils/constants";
 import '../TaskForm.css';
 import { useTasks } from "../hooks/useTasks";
 import LoadingSpinner from "./Loading";
+
+const EMPTY_TASK = { title: '', description: '', date: '', time: '', remindBefore: '' };
+
+const toFormState = (task) => ({
+    title: task.title || '',
+    description: task.description || '',
+    date: task.date || '',
+    time: task.time || '',
+    remindBefore: task.remindBefore === null || task.remindBefore === undefined ? '' : String(task.remindBefore),
+});
+
+const toPayload = (task) => ({
+    title: task.title,
+    description: task.description,
+    date: task.date || null,
+    time: task.time || null,
+    remindBefore: task.date && task.time && task.remindBefore !== '' ? Number(task.remindBefore) : null,
+});
 
 export default function CreateTask({ taskToEdit, onCancelEdit }) {
     const { addTask, editTask, isLoading } = useTasks();
     const router = useRouter();
 
     const [errors, setErrors] = useState({ title: '', description: '' });
-    const [task, setTask] = useState({
-        title: '',
-        description: '',
-        date: null
-    });
+    const [task, setTask] = useState(EMPTY_TASK);
 
     useEffect(() => {
         if (taskToEdit != null) {
-            setTask({
-                title: taskToEdit.title || "",
-                description: taskToEdit.description || "",
-                date: taskToEdit.date || ""
-            });
+            setTask(toFormState(taskToEdit));
             setErrors({
                 title: '',
                 description: ''
             });
         } else {
-            setTask({
-                title: '',
-                description: '',
-                date: null
-            });
+            setTask(EMPTY_TASK);
             setErrors({
                 title: '',
                 description: ''
@@ -54,28 +60,30 @@ export default function CreateTask({ taskToEdit, onCancelEdit }) {
 
         // If editing, require at least one field to be changed
         if (taskToEdit) {
-            const changed =
-                task.title.trim() !== (taskToEdit.title || '').trim() ||
-                task.description.trim() !== (taskToEdit.description || '').trim() ||
-                (task.date || '') !== (taskToEdit.date || '');
+            const original = toFormState(taskToEdit);
+            const changed = Object.keys(EMPTY_TASK).some(
+                key => String(task[key]).trim() !== String(original[key]).trim()
+            );
             return fieldsValid && changed;
         }
         return fieldsValid;
-    }, [task, errors]);
+    }, [task, errors, taskToEdit]);
+
+    // A reminder needs both a date and a time of day.
+    const canRemind = Boolean(task.date && task.time);
 
     const inputChange = (e) => {
         const { name, value } = e.target;
         let newErrors = validate(name, value);
-        setTask({ ...task, [name]: value });
+        const next = { ...task, [name]: value };
+        if (!next.date || !next.time) next.remindBefore = '';
+        setTask(next);
         setErrors({ ...errors, ...newErrors });
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const normalizedTask = {
-            ...task,
-            date: task.date === "" ? null : task.date
-        };
+        const normalizedTask = toPayload(task);
         if (taskToEdit != null) {
             editTask.mutate({ ...normalizedTask, id: taskToEdit.id }, {
                 onSuccess: () => {
@@ -87,7 +95,7 @@ export default function CreateTask({ taskToEdit, onCancelEdit }) {
             });
             router.push('/');
         } else {
-            addTask.mutate(task, {
+            addTask.mutate(normalizedTask, {
                 onSuccess: () => {
                     toast.success("Task created successfully!");
                 },
@@ -97,11 +105,7 @@ export default function CreateTask({ taskToEdit, onCancelEdit }) {
             });
             router.push('/');
         }
-        setTask({
-            title: '',
-            description: '',
-            date: null
-        });
+        setTask(EMPTY_TASK);
         setErrors({
             title: '',
             description: ''
@@ -127,11 +131,28 @@ export default function CreateTask({ taskToEdit, onCancelEdit }) {
                     <textarea name="description" id="task-description" value={task.description} onChange={inputChange} />
                     {errors.description && <span className="error">{errors.description}</span>}
                 </div>
+                <div className="field-row">
+                    <div>
+                        <label htmlFor="task-date">
+                            Task date:
+                        </label>
+                        <input name="date" id="task-date" type="date" value={task.date} onChange={inputChange} />
+                    </div>
+                    <div>
+                        <label htmlFor="task-time">
+                            Time:
+                        </label>
+                        <input name="time" id="task-time" type="time" value={task.time} onChange={inputChange} />
+                    </div>
+                </div>
                 <div>
-                    <label htmlFor="task-date">
-                        Task date:
+                    <label htmlFor="task-reminder">
+                        Reminder:
                     </label>
-                    <input name="date" id="task-date" type="date" value={task.date || ''} onChange={inputChange} />
+                    <select name="remindBefore" id="task-reminder" value={task.remindBefore} onChange={inputChange} disabled={!canRemind}>
+                        {REMINDER_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                    </select>
+                    {!canRemind && <span className="hint">Set a date and time to add a reminder.</span>}
                 </div>
 
                 <button type="submit" disabled={!isFormValid}>

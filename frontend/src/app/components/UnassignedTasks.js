@@ -16,7 +16,7 @@ function UnassignedTasks({ search }) {
 
     if (loading) return <LoadingSpinner />;
     return <div className="unassigned-panel">
-        <h3>UnassignedTasks</h3>
+        <h3>Unassigned tasks</h3>
         {
             filteredTasks.length === 0 ? !search ? (<p>No unassigned tasks</p>) : (<p>No tasks found for "{search}"</p>)
                 : (
